@@ -28,23 +28,18 @@
 </template>
 
 <script lang="ts">
+import { ITitle } from "@/api";
 import { defineComponent, computed } from "vue";
-
-interface Item {
-  id: string;
-  title: string;
-  parent_id: string | null;
-}
 
 export default defineComponent({
   name: "TreeItem",
   props: {
     item: {
-      type: Object as () => Item,
+      type: Object as () => ITitle,
       required: true,
     },
     allItems: {
-      type: Array as () => Item[],
+      type: Array as () => ITitle[],
       required: true,
     },
     openedIds: {

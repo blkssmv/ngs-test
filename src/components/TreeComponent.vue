@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button @click="rerenderPage">Rerender Page</button>
+    <button @click="rerenderComponent">rerender component</button>
     <ul>
       <TreeItem
         v-for="item in rootItems"
@@ -16,32 +16,23 @@
 
 <script lang="ts">
 import { defineComponent, ref, onMounted, computed } from "vue";
-import axios from "axios";
+import { ITitle, getTitles } from "../api";
 import TreeItem from "./TreeItem.vue";
-
-interface Item {
-  id: string;
-  title: string;
-  parent_id: string | null;
-}
 
 export default defineComponent({
   components: { TreeItem },
   setup() {
-    const items = ref<Item[]>([]);
+    const items = ref<ITitle[]>([]);
     const openedIds = ref<string[]>(
       JSON.parse(localStorage.getItem("openedIds") || "[]")
     );
 
     const fetchItems = async () => {
-      const response = await axios.get<Item[]>(
-        "https://64b4c8450efb99d862694609.mockapi.io/tree/items"
-      );
-      items.value = response.data;
+      items.value = await getTitles();
     };
 
-    const rerenderPage = () => {
-      location.reload();
+    const rerenderComponent = () => {
+      items.value = [...items.value];
     };
 
     const toggleItem = (id: string) => {
@@ -62,7 +53,7 @@ export default defineComponent({
     return {
       items,
       openedIds,
-      rerenderPage,
+      rerenderComponent,
       toggleItem,
       rootItems,
     };
@@ -74,7 +65,6 @@ export default defineComponent({
 button {
   text-decoration: none;
   display: inline-block;
-  color: white;
   padding: 10px 30px;
   margin: 10px 20px;
   border: none;
@@ -82,18 +72,10 @@ button {
   cursor: pointer;
   text-transform: uppercase;
   letter-spacing: 2px;
-  background-image: linear-gradient(
-    to right,
-    #f6e6ad 0%,
-    #f5d064 51%,
-    #f1b74b 100%
-  );
   background-size: 200% auto;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
   transition: 0.5s;
-
   &:hover {
-    background-position: right center;
+    background-color: #ccc;
   }
 }
 </style>
